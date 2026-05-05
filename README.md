@@ -355,6 +355,7 @@ IN NO EVENT SHALL THE AUTHORS, COPYRIGHT HOLDERS, OR CONTRIBUTORS BE LIABLE FOR 
 ### Special thanks to everyone who contributes to this project (in alphabetical order):
 
 - 47LeCoste
+- Ash
 - D4c1
 - D4rks1d3
 - LTX74
