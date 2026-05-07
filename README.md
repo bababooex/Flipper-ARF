@@ -22,6 +22,7 @@ This project may incorporate, adapt, or build upon **other open-source projects*
 - [Contribution Policy](#contribution-policy)
 - [Citations & References](#citations--references)
 - [Disclaimer](#disclaimer)
+- [Special Thanks](#special-thanks-to-everyone-who-contributes-to-this-project)
 
 ---
 
@@ -362,13 +363,22 @@ IN NO EVENT SHALL THE AUTHORS, COPYRIGHT HOLDERS, OR CONTRIBUTORS BE LIABLE FOR 
 
 ## Special Thanks
 
-- 47LeCoste
-- Ash
-- D4c1
-- D4rks1d3
-- LTX74
-- Leeroy
-- lupettohf
-- MMX
-- RalphWiggum
-- zero-mega
+<table align="center">
+  <tr>
+    <td align="center">
+      <a href="https://github.com/whatthefxck">
+        <img src="https://avatars.githubusercontent.com/whatthefxck?s=80" width="80" height="80" alt="whatthefxck"/>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/zero-mega">
+        <img src="https://avatars.githubusercontent.com/zero-mega?s=80" width="80" height="80" alt="zero-mega"/>
+      </a>
+    </td>
+  </tr>
+</table>
+
+<p align="center">
+  Special thanks to everyone who contributed code, testing, reversing,
+  research, ideas, captures and documentation.
+</p>
