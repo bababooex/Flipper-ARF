@@ -8,25 +8,62 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: release
+  cancel-in-progress: false
+
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get latest semantic version tag
+        id: version
+        shell: bash
+        run: |
+          git fetch --tags
+
+          LAST_TAG=$(git tag --sort=-v:refname | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | head -n 1 || true)
+
+          if [ -z "$LAST_TAG" ]; then
+            NEW_TAG="1.0.0"
+          else
+            IFS='.' read -r MAJOR MINOR PATCH <<< "$LAST_TAG"
+
+            PATCH=$((PATCH + 1))
+
+            NEW_TAG="$MAJOR.$MINOR.$PATCH"
+          fi
+
+          echo "Latest tag: $LAST_TAG"
+          echo "New tag: $NEW_TAG"
+
+          echo "NEW_TAG=$NEW_TAG" >> $GITHUB_OUTPUT
+
+      - name: Create Git tag
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git tag ${{ steps.version.outputs.NEW_TAG }}
+          git push origin ${{ steps.version.outputs.NEW_TAG }}
 
       - name: Build firmware
+        shell: bash
         run: |
           export DIST_SUFFIX=Flipper-ARF
           chmod +x fbt
           ./fbt COMPACT=1 DEBUG=0 updater_package
 
-      - name: Generate tag name
-        id: tag
-        run: echo "TAG=dev-$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
-
       - name: Detect firmware updater
         id: firmware
+        shell: bash
         run: |
           DIR=$(ls -d dist/f7-* | head -n 1)
           FILE="$DIR/flipper-z-f7-update-Flipper-ARF.tgz"
@@ -36,13 +73,18 @@ jobs:
             exit 1
           fi
 
+          echo "Found firmware: $FILE"
+
           echo "FILE=$FILE" >> $GITHUB_OUTPUT
 
-      - name: Create Release
+      - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ steps.tag.outputs.TAG }}
-          name: Dev Build ${{ steps.tag.outputs.TAG }}
-          files: ${{ steps.firmware.outputs.FILE }}
+          tag_name: ${{ steps.version.outputs.NEW_TAG }}
+          name: Release ${{ steps.version.outputs.NEW_TAG }}
+          generate_release_notes: true
+          make_latest: true
+          files: |
+            ${{ steps.firmware.outputs.FILE }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
