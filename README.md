@@ -36,6 +36,8 @@ This project may incorporate, adapt, or build upon **other open-source projects*
 | Keeloq Key Manager | Mod Hopping Config |
 | ![PSA Decrypt](.arf_pictures/psa_decrypt_builtin.png) | ![Counter BruteForce](.arf_pictures/counter_bruteforce.png) |
 | PSA XTEA Decrypt | Counter BruteForce |
+| ![Custom Emulation Settings](.arf_pictures/custom_emulation_settings.png) | ![Custom Emulation Scene](.arf_pictures/custom_emulation_scene.png) |
+| Custom Emulation Settings | Custom Emulation Scene |
 
 ---
 
