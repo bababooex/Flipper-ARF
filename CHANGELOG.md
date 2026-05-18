@@ -21,7 +21,7 @@
 
 ### Special Thanks
 
-Special thanks to [RocketGod-git](https://github.com/RocketGod-git?utm_source=chatgpt.com) for inspiration from the Proto Pirate application and related UI/interaction concepts that helped shape the CarEmulate workflow.
+Special thanks to [RocketGod-git](https://github.com/RocketGod-git) for inspiration from the Proto Pirate application and related UI/interaction concepts that helped shape the CarEmulate workflow.
 
 ---
 
@@ -31,7 +31,7 @@ Protocols can now expose UP/DOWN/LEFT/RIGHT button cycling in the transmitter vi
 
 ### New macro
 
-```c id="x0p8ad"
+```
 SUBGHZ_CUSTOM_BTN_DEFINE_MAP(
     my_proto,
     {SUBGHZ_CUSTOM_BTN_OK,    0xAA},
@@ -58,7 +58,7 @@ The macro automatically generates:
 
 ### Special Thanks
 
-Thanks to [Zero-Mega](https://github.com/Zero-Mega?utm_source=chatgpt.com) for research, references, and contributions related to Land Rover protocol support.
+Thanks to [Zero-Mega](https://github.com/Zero-Mega) for research, references, and contributions related to Land Rover protocol support.
 
 ---
 
