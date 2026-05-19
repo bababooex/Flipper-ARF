@@ -17,6 +17,7 @@ enum SubGhzSettingIndex {
     SubGhzSettingIndexIgnoreNiceFlorS,
     SubGhzSettingIndexDeleteOldSignals,
     SubGhzSettingIndexSound,
+    SubGhzSettingIndexProtoFilter,
     SubGhzSettingIndexResetToDefault,
     SubGhzSettingIndexLock,
     SubGhzSettingIndexRAWThresholdRSSI,
@@ -445,7 +446,9 @@ static void subghz_scene_receiver_config_set_delete_old_signals(VariableItem* it
 static void subghz_scene_receiver_config_var_list_enter_callback(void* context, uint32_t index) {
     furi_assert(context);
     SubGhz* subghz = context;
-    if(index == SubGhzSettingIndexLock) {
+    if(index == SubGhzSettingIndexProtoFilter) {
+        scene_manager_next_scene(subghz->scene_manager, SubGhzSceneProtocolList);
+    } else if(index == SubGhzSettingIndexLock) {
         view_dispatcher_send_custom_event(
             subghz->view_dispatcher, SubGhzCustomEventSceneSettingLock);
     } else if(index == SubGhzSettingIndexResetToDefault) {
@@ -473,6 +476,7 @@ static void subghz_scene_receiver_config_var_list_enter_callback(void* context, 
         subghz->last_settings->filter = subghz->filter;
         subghz->last_settings->delete_old_signals = false;
         subghz->last_settings->tx_power = subghz->tx_power = 0;
+        subghz->last_settings->protocol_filter[0] = '\0';
         subghz_txrx_speaker_set_state(subghz->txrx, speaker_value[default_index]);
 
         subghz_txrx_hopper_set_state(subghz->txrx, hopping_value[default_index]);
@@ -668,6 +672,25 @@ void subghz_scene_receiver_config_on_enter(void* context) {
 
     if(scene_manager_get_scene_state(subghz->scene_manager, SubGhzSceneReadRAW) !=
        SubGhzCustomEventManagerSet) {
+        /* Protocol filter — abre la lista de protocolos */
+        item = variable_item_list_add(
+            subghz->variable_item_list,
+            "Proto Filter",
+            1,
+            NULL,
+            subghz);
+        if(subghz->last_settings->protocol_filter[0] == '\0') {
+            variable_item_set_current_value_text(item, "All");
+        } else {
+            uint8_t count = 1;
+            for(const char* p = subghz->last_settings->protocol_filter; *p; p++) {
+                if(*p == ',') count++;
+            }
+            static char filter_count_str[8];
+            snprintf(filter_count_str, sizeof(filter_count_str), "%u set", count);
+            variable_item_set_current_value_text(item, filter_count_str);
+        }
+
         // Reset to default
         variable_item_list_add(subghz->variable_item_list, "Reset to default", 1, NULL, NULL);
 

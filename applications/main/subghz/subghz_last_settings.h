@@ -31,6 +31,7 @@ typedef struct {
     bool leds_and_amp;
     uint8_t tx_power;
     bool custom_car_emulate;
+    char protocol_filter[256];  /* comma-separated allowlist, empty = disabled */
 } SubGhzLastSettings;
 
 SubGhzLastSettings* subghz_last_settings_alloc(void);

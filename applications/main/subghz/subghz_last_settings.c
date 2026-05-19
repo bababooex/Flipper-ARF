@@ -23,6 +23,7 @@
 #define SUBGHZ_LAST_SETTING_FIELD_LED_AND_POWER_AMP                 "LedAndPowerAmp"
 #define SUBGHZ_LAST_SETTING_FIELD_TX_POWER                          "TXPower"
 #define SUBGHZ_LAST_SETTING_FIELD_CUSTOM_CAR_EMULATE                "CustomCarEmulate"
+#define SUBGHZ_LAST_SETTING_FIELD_PROTOCOL_FILTER                   "ProtocolFilter"
 
 SubGhzLastSettings* subghz_last_settings_alloc(void) {
     SubGhzLastSettings* instance = malloc(sizeof(SubGhzLastSettings));
@@ -51,6 +52,7 @@ void subghz_last_settings_load(SubGhzLastSettings* instance, size_t preset_count
     instance->enable_preset_hopping = false;
     instance->preset_hopping_threshold = SUBGHZ_LAST_SETTING_DEFAULT_PRESET_HOPPING_THRESHOLD;
     instance->leds_and_amp = true;
+    instance->protocol_filter[0] = '\0';
 
     Storage* storage = furi_record_open(RECORD_STORAGE);
     FlipperFormat* fff_data_file = flipper_format_file_alloc(storage);
@@ -172,6 +174,19 @@ void subghz_last_settings_load(SubGhzLastSettings* instance, size_t preset_count
                 instance->custom_car_emulate = false;
                 flipper_format_rewind(fff_data_file);
             }
+            FuriString* filter_str = furi_string_alloc();
+            if(flipper_format_read_string(
+                   fff_data_file, SUBGHZ_LAST_SETTING_FIELD_PROTOCOL_FILTER, filter_str)) {
+                strncpy(
+                    instance->protocol_filter,
+                    furi_string_get_cstr(filter_str),
+                    sizeof(instance->protocol_filter) - 1);
+                instance->protocol_filter[sizeof(instance->protocol_filter) - 1] = '\0';
+            } else {
+                instance->protocol_filter[0] = '\0';
+                flipper_format_rewind(fff_data_file);
+            }
+            furi_string_free(filter_str);
 
         } while(0);
     } else {
@@ -295,6 +310,12 @@ bool subghz_last_settings_save(SubGhzLastSettings* instance) {
                SUBGHZ_LAST_SETTING_FIELD_CUSTOM_CAR_EMULATE,
                &instance->custom_car_emulate,
                1)) {
+            break;
+        }
+        if(!flipper_format_write_string_cstr(
+               file,
+               SUBGHZ_LAST_SETTING_FIELD_PROTOCOL_FILTER,
+               instance->protocol_filter)) {
             break;
         }
 
